@@ -9,6 +9,10 @@ static website. Sets up Lambda and API Gateway.
 
 ...
 
+## This module does not..
+
+Create SES. You should do this yourself
+
 ## Usage
 
 To use this module ...
@@ -17,6 +21,12 @@ To use this module ...
 {
   "some_conf": "might need explanation"
 }
+```
+
+## Local Python development
+
+```
+AWS_PROFILE=some-profile python lambda_src/html_form_action.py
 ```
 
 <!-- BEGIN_TF_DOCS -->

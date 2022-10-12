@@ -1,12 +1,11 @@
-# VARIABLES
-variable "sender_email" {
+variable "to_email" {
   type = string
+  description = "'From' email to use when forwarding a message, defaults to recipient email in the Lambda, can also be configured in html form"
   default = ""
-  description = "'From' email to use when forwarding a message, defaults to recipient email in the Lambda"
 }
 
-variable "recipient_email" {
+variable "from_email" {
   type = string
-  description = "Receiving email address for forwarded messages"
+  description = "Receiving email address for forwarded messages, can also be configured in html form"
   default = ""
 }

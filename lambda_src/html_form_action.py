@@ -1,67 +1,83 @@
 import boto3
 from botocore.exceptions import ClientError
+import json
+import os
+import urllib.parse
+
+def field_value(field_dict, key, default):
+    if key in field_dict:
+        return field_dict[key][0]
+    else:
+        return default
+
+def form_mail_body(field_dict):
+    html = "<table>"
+    for key, value in field_dict.items():
+        if key[0] == "_":
+            continue
+
+        html += "<tr>"
+        html += "<td>"+key+"</td>"
+        html += "<td>"+value[0]+"</td>"
+        html += "</tr>"
+    html += "</table>"
+    return html
 
 def lambda_handler(event, lambda_context):
 
-    SENDER = "Sender Name <pim@technative.nl>"
-    RECIPIENT = "pim@technative.nl"
-    AWS_REGION = "eu-central-1"
-    SUBJECT = "Amazon SES Test (SDK for Python)"
-    BODY_TEXT = ("Amazon SES Test (Python)\r\n"
-                 "This email was sent with Amazon SES using the "
-                 "AWS SDK for Python (Boto)."
-                )
+    #slack_webhook_url = os.environ.get('SLACK_WEBHOOK_URL')
+    #lambda_conf = json.loads(os.environ.get('LAMBDA_CONF'))
+    #sts_master_account_role_arn = os.environ.get('STS_MASTER_ACCOUNT_ROLE_ARN')
+    #default_threshold = os.environ.get('DEFAULT_THRESHOLD')
 
-    # The HTML body of the email.
-    BODY_HTML = """
-    <html>
-    <head></head>
-    <body>
-      <h1>Amazon SES Test (SDK for Python)</h1>
-      <p>This email was sent with
-        <a href='https://aws.amazon.com/ses/'>Amazon SES</a> using the
-        <a href='https://aws.amazon.com/sdk-for-python/'>
-          AWS SDK for Python (Boto)</a>.</p>
-    </body>
-    </html>
-    """
+    mail_charset = "UTF-8"
+    AWS_REGION   = "eu-central-1" # TODO ENVVAR
 
-    # The character encoding for the email.
-    CHARSET = "UTF-8"
+    queryStr = event["body"]
+    fields = urllib.parse.parse_qs(queryStr)
+    success_url = field_value(fields, "_success_url", "")
+    field_html = form_mail_body(fields)
 
-    # Create a new SES resource and specify a region.
+    mail_body = f" <html> <head></head> <body> <h1>Form:</h1>{field_html} </body> </html> "
+
+    return_body="""
+<html>
+<head>
+</head>
+<body>
+Form has been submitted.
+</body>
+</html>
+"""
+
+    if(success_url != ""):
+        return_body=f"<html><head><meta http-equiv=\"Refresh\" content=\"0; URL={success_url}\" /></head><body></body></html>"
+
     client = boto3.client('ses',region_name=AWS_REGION)
     #client = boto3.client('ses')
-
-    # Try to send the email.
     try:
-        #Provide the contents of the email.
+        to_address = field_value(fields, "_to", os.environ.get('TO_MAIL'))
+        from_address = field_value(fields, "_from", os.environ.get('FROM_MAIL'))
+
         response = client.send_email(
             Destination={
                 'ToAddresses': [
-                    RECIPIENT,
+                    to_address,
                 ],
             },
             Message={
                 'Body': {
                     'Html': {
-                        'Charset': CHARSET,
-                        'Data': BODY_HTML,
-                    },
-                    'Text': {
-                        'Charset': CHARSET,
-                        'Data': BODY_TEXT,
+                        'Charset': mail_charset,
+                        'Data': mail_body,
                     },
                 },
                 'Subject': {
-                    'Charset': CHARSET,
-                    'Data': SUBJECT,
+                    'Charset': mail_charset,
+                    'Data': field_value(fields,"_subject", "Form Submission"),
                 },
             },
-            Source=SENDER,
-            # If you are not using a configuration set, comment or delete the
-            # following line
-            #ConfigurationSetName=CONFIGURATION_SET,
+            Source=from_address,
         )
     except ClientError as e:
         return {
@@ -78,11 +94,15 @@ def lambda_handler(event, lambda_context):
             "headers": {
                 "Content-Type": "text/html"
                 },
-            "body": "<h1>OK</h1>"
+            "body": return_body
+            #"body": json.dumps(event)
             }
 
 
 ## THIS BLOCK IS TOO RUN LAMBDA LOCALLY
 if __name__ == '__main__':
+    mock_event = {
+            "body": "_subject=Demo+Form+Submission&_to=pim%40technative.nl&_from=pim%40technative.nl&_success_url=http%3A%2F%2Flocalhost%3A8000%2Fform_success.html&_fail_url=http%3A%2F%2Flocalhost%3A8000%2Fform.html&full-name=test&Email=test&message=test"
+            }
 
-    lambda_handler({}, {})
+    lambda_handler(mock_event, {})

@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <title>Demo Form to AWS API-Gateway/Lambda</title>
+  </head>
+  <style>
+html{
+  font-family: sans-serif;
+  font-size: 16px;
+}
+div{
+  margin:auto;
+  width: 600px;
+}
+textarea,input{
+  width: 100%;
+  margin:1em;
+}
+  </style>
+  <body>
+    <div>
+
+      <h1>Demo Form to AWS API-Gateway/Lambda</h1>
+      <form action="https://9dz9tkbxd2.execute-api.eu-central-1.amazonaws.com/main/message" method="post">
+
+        <!-- FORM CONFIGURATION -->
+        <input type="hidden" name="_subject" value="Demo Form Submission">
+        <input type="hidden" name="_to" value="pim@technative.nl">
+        <input type="hidden" name="_from" value="pim@technative.nl">
+        <input type="hidden" name="_success_url" value="http://localhost:8000/form_success.html">
+        <input type="hidden" name="_fail_url" value="http://localhost:8000/form.html">
+
+        <!-- FORM FIELDS -->
+        <input placeholder="Full Name" type="text" name="full-name"><br>
+        <input placeholder="Email" type="text" name="Email"><br>
+        <textarea name="message" placeholder="Your message"></textarea><br>
+
+        <input type="submit" value="send"></br>
+
+      </form>
+      <div>
+  </body>
+</html>

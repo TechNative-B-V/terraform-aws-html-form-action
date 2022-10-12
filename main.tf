@@ -1,12 +1,3 @@
-#resource "aws_ses_email_identity" "recipient2" {
-#  email = var.recipient_email
-#}
-#
-#resource "aws_ses_email_identity" "sender2" {
-#  count = var.sender_email != "" ? 1 : 0
-#  email = var.sender_email
-#}
-
 module "lambda_function" {
   source = "terraform-aws-modules/lambda/aws"
   version = "3.3.1"
@@ -16,8 +7,6 @@ module "lambda_function" {
   handler       = "html_form_action.lambda_handler"
   runtime       = "python3.9"
 
-  #source_path = format("%s/lambda-src",abspath(path.module))
-  #source_path = "${path.module}/lambda_src"
   source_path = [
     format("%s/lambda_src", abspath(path.module)),
     {
@@ -28,12 +17,12 @@ module "lambda_function" {
   publish = true
   timeout = 15
 
-  #  environment_variables = {
-  #   LAMBDA_CONF = var.configured_accounts_json
-  #  }
+  environment_variables = {
+    TO_MAIL = var.to_email
+    FROM_MAIL = var.from_email
+  }
 
   attach_policy_json = true
-  #policy_json = data.aws_iam_policy_document.lambda_extra_permissions.json
   policy_json = <<EOF
 {
   "Version": "2012-10-17",
@@ -49,33 +38,6 @@ module "lambda_function" {
 EOF
 
 }
-
-#data "aws_iam_policy_document" "lambda_extra_permissions" {
-#  statement {
-#    actions   = ["ses:SendEmail"]
-#    resources = ["*"]
-#  }
-#}
-#
-#resource "aws_iam_policy" "send" {
-#  name = "SES_Send_Email2"
-#
-#  policy = <<EOF
-#{
-#  "Version": "2012-10-17",
-#  "Statement": [
-#    {
-#      "Sid": "",
-#      "Effect": "Allow",
-#      "Action": "ses:SendEmail",
-#      "Resource": "*"
-#    }
-#  ]
-#}
-#EOF
-#
-#}
-#
 
 resource "aws_lambda_permission" "lambda_permission" {
   statement_id  = "AllowAPIInvoke"
