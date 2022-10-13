@@ -11,16 +11,14 @@ def field_value(field_dict, key, default):
         return default
 
 def form_mail_body(field_dict):
-    html = "<table>"
+    html = ""
     for key, value in field_dict.items():
         if key[0] == "_":
             continue
 
-        html += "<tr>"
-        html += "<td>"+key+"</td>"
-        html += "<td>"+value[0]+"</td>"
-        html += "</tr>"
-    html += "</table>"
+        html += "<p><strong>"+key+":</strong><br>"
+        html += value[0]+"</p>"
+
     return html
 
 def lambda_handler(event, lambda_context):
@@ -38,7 +36,7 @@ def lambda_handler(event, lambda_context):
     success_url = field_value(fields, "_success_url", "")
     field_html = form_mail_body(fields)
 
-    mail_body = f" <html> <head></head> <body> <h1>Form:</h1>{field_html} </body> </html> "
+    mail_body = f" <html> <head></head> <body> <h1>Form data</h1>{field_html} </body> </html> "
 
     return_body="""
 <html>

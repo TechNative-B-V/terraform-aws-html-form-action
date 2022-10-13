@@ -91,5 +91,5 @@ module "resource_cors" {
   resource =  aws_api_gateway_resource.message.id
   methods = ["POST"]
 
-  origin = "*"
+  origin = var.allowed_origin
 }
