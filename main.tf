@@ -2,8 +2,8 @@ module "lambda_function" {
   source = "terraform-aws-modules/lambda/aws"
   version = "3.3.1"
 
-  function_name = "html_form_action"
-  description   = "Sends mails at HTML Form submits"
+  function_name = var.name
+  description   = "Sends mails at HTML Form submissions"
   handler       = "html_form_action.lambda_handler"
   runtime       = "python3.9"
 
@@ -42,13 +42,13 @@ EOF
 resource "aws_lambda_permission" "lambda_permission" {
   statement_id  = "AllowAPIInvoke"
   action        = "lambda:InvokeFunction"
-  function_name = "html_form_action"
+  function_name = var.name
   principal     = "apigateway.amazonaws.com"
   source_arn = "${aws_api_gateway_rest_api.main.execution_arn}/*/*"
 }
 
 resource "aws_api_gateway_rest_api" "main" {
-  name = "html_form_action"
+  name = var.name
 }
 
 resource "aws_api_gateway_resource" "message" {
