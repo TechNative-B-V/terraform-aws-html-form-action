@@ -11,9 +11,9 @@ This modules creates and API Gateway POST resource and connects this to a
 lambda function. When a HTML form is submitted the API Gateway forwards the
 formdata to the lambda function and this sends the email.
 
-## This module does not..
+## Requirements
 
-Create a SES endpoint. You should do this yourself.
+You need a configured SES domain or SES emails available in the same account.
 
 ## Usage
 
@@ -33,6 +33,25 @@ output "form_action_example_com_url_for_form" {
 }
 ```
 
+The form html looks like this.
+
+```html
+<form action="https://XXXXXXXXXX.execute-api.eu-central-1.amazonaws.com/main/message" method="post">
+
+  <!-- FORM CONFIGURATION -->
+  <input type="hidden" name="_subject" value="Demo Form Submission">
+  <input type="hidden" name="_success_url" value="http://example.com/form_success.html">
+  <input type="hidden" name="_fail_url" value="http://example.com/form.html">
+
+  <!-- FORM FIELDS -->
+  <input placeholder="Full Name" type="text" name="full-name"><br>
+  <input placeholder="Email" type="text" name="Email"><br>
+  <textarea name="message" placeholder="Your message"></textarea><br>
+
+  <input type="submit" value="send"></br>
+
+</form>
+```
 
 ## Local Python development
 
