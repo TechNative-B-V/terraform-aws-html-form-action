@@ -45,7 +45,7 @@ AWS_PROFILE=some-profile python lambda_src/html_form_action.py
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.0.0 |
 
 ## Modules
 
