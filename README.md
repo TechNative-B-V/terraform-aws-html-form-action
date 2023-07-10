@@ -33,6 +33,8 @@ output "form_action_example_com_url_for_form" {
 }
 ```
 
+### Simple html form
+
 The form html looks like this.
 
 ```html
@@ -51,6 +53,53 @@ The form html looks like this.
   <input type="submit" value="send"></br>
 
 </form>
+```
+
+### form with reply functionality
+
+The form html looks like this.
+
+```html
+<form action="https://XXXXXXXXXX.execute-api.eu-central-1.amazonaws.com/main/message" method="post">
+
+  <!-- FORM CONFIGURATION -->
+  <input type="hidden" name="_subject" value="Demo Form Submission">
+  <input type="hidden" name="_success_url" value="http://example.com/form_success.html">
+  <input type="hidden" name="_fail_url" value="http://example.com/form.html">
+
+  <!-- Set the field in this form which contains the visiter email address to send a reply mail to -->
+  <input type="hidden" name="_visiter_email_field" value="Email">
+  <!-- This field contains a link to a mail template. This is html file which is used to create a reply -->
+  <input type="hidden" name="_reply_mail_template" value="http://example.com/mail_template.html">
+
+
+  <!-- FORM FIELDS -->
+  <input placeholder="Full Name" type="text" name="full_name"><br>
+  <input placeholder="Email" type="text" name="Email"><br>
+  <textarea name="message" placeholder="Your message"></textarea><br>
+
+  <input type="submit" value="send"></br>
+
+</form>
+```
+
+The mail_template could look like this. The title is used as subject. The form
+handler will try to substitute variables with the fields from the form.
+
+```html
+<html>
+<head>
+<title>Mailform submitted</title>
+</head>
+<body>
+Dear $full_name,
+
+Your mail has been sent.
+
+Cheers!
+
+</body>
+</html>
 ```
 
 ## Local Python development

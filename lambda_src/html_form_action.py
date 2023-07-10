@@ -42,9 +42,6 @@ def get_template(link):
 
 def send_reply_mail(fields):
 
-    #print(fields)
-    #print(flatten_fields(fields))
-
     if "_reply_mail_template" in fields and "_visiter_email_field" in fields and fields["_visiter_email_field"][0] in fields:
         to_address = fields[fields["_visiter_email_field"][0]][0]
         if re.match(r"[^@]+@[^@]+\.[^@]+", to_address):
@@ -52,8 +49,6 @@ def send_reply_mail(fields):
             mail_template = str(get_template(fields["_reply_mail_template"][0]))
             src = Template(mail_template)
             mail_body = src.substitute(flatten_fields(fields))
-
-            #mail_body = get_template(fields["_reply_mail_template"][0])
 
             match = re.search('<title>(.*?)</title>', mail_body)
             subject = match.group(1) if match else 'No subject'
