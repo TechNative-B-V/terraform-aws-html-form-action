@@ -1,5 +1,5 @@
 module "form_action_example_com" {
-  source         = "TechNative-B-V/terraform-aws-html-form-action/aws"
+  source         = "TechNative-B-V/html-form-action/aws"
 
   name           = "example-com-form-action-handler"
   to_email       = "webinbox@example.com" # Make sure SES accepts this email address or complete domain
